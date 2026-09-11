@@ -1,33 +1,29 @@
 # Cafe Sales Data Cleaning
 
-- İçerik: Cafe Sales (Kaggle) data seti üzerinde uçtan uca bir data cleaning çalışması.
-- Amaç: Gerçekçi bir kirli veri setinde eksik beri ile karşılaşınca kullanılacak stratejileri pratik etmek.
+- Content: An end-to-end data cleaning project on the Cafe Sales (Kaggle) dataset.
+- Goal: Practicing the strategies used when facing missing data in a realistic dirty dataset.
 
 ## Dataset
 
-- Kaynak: [Cafe Sales - Dirty Data for Cleaning Training](https://www.kaggle.com/datasets/ahmedmohamed2003/cafe-sales-dirty-data-for-cleaning-training)
+- Source: [Cafe Sales - Dirty Data for Cleaning Training](https://www.kaggle.com/datasets/ahmedmohamed2003/cafe-sales-dirty-data-for-cleaning-training)
+- Total: 10,000 rows, 8 columns
 
-- Toplam: 10.000 satır, 8 sütun
+## Issues Found and Solutions
 
+### 1. Rows with wrong data type
+Quantity, Price Per Unit and Total Spent were stored as strings (object) instead of numeric. Converted to numeric using pd.to_numeric().
 
-## Bulunan Sorunlar ve Çözümler
+### 2. Rows with missing data
+- First, replaced "ERROR" / "UNKNOWN" values with np.nan, which revealed the real missing data rate.
+- Used the relationship Total Spent = Quantity x Price Per Unit to fill in any one of the three columns when it was missing, using the other two.
+- Payment Method, Location and Transaction Date had no statistical relationship with other columns, so missing values in these were filled with "Unknown".
+- For products with a unique Price Per Unit, missing Item names were inferred from price. This wasn't applied to products with overlapping prices, since it wouldn't be reliable.
+- A small number of rows (57) where multiple related columns were empty at the same time, with no way to fill them, were dropped.
 
-### 1. Yanlış Veri Tipi İçeren Satırlar
-- Quantity, Price Per Unit, Total Spent satırları sayısal olmaları gerekirken string (object) olarak bulunuyordu. pd.to_numeric() kullanılarak sayıya çevirildi.
+## Result
+- Missing values across all columns were reduced to 0. The cleaned data was saved as a new csv file.
+- Part of the Item column (474 rows) couldn't be determined with certainty due to multiple products sharing the same price, and was marked as "Unknown".
+- No relationship was found between Transaction Date and Transaction ID, so missing dates were not estimated.
 
-### 2. Eksik Veri İçeren Satırlar
-- Öncelikle "ERROR" / "UNKNOWN" değerleri np.nan ile değiştirildi. Bu sayede gerçek eksik veri oranı ortaya çıkarılmış oldu.
-- Total Spent = Quantity x Price Per Unit ilişkisi kullanılarak üç satırdan herhangi biri eksikse diğer ikisi kullanılarak hesaplandı ve dolduruldu. 
-- Payment Method, Location, Transaction Date için diğer sütunlarla istatistiksel bir ilişki bulunamadığı için bu satırlardaki eksik değerler “Unknown” ile dolduruldu.
-- Price Per Unit değeri unique olan ürünler için eksik Item isimleri fiyattan tahmin edildi. Fiyatı çakışan ürünler için bu yöntem güvenilir olmadığı için uygulanmadı.
-- Birden fazla ilgili sütun aynı anda boş olup hiçbir yöntemle doldurulması mümkün olmayan az sayıda satır (57) silindi.
-
-## Sonuç
-- Tüm sütunlarda eksik veri sayısı 0’a indirildi. Temiz veri yeni bir csv dosyası olarak kaydedildi.
-- Item sütununun bir kısmı (474 satır) aynı fiyatta birden fazla ürün olması sebebiyle kesin olarak tespit edilemedi, “Unknown” olarak işaretlendi.
-- Transaction Date ve Transaction ID arasında kronolojik bir ilişki tespit edilemediği için eksik tarihler üzerine tahmin yapılmadı.
-
-## Kullanılan Araçlar
+## Tools
 Python, pandas, numpy, Jupyter Notebook
-
-
